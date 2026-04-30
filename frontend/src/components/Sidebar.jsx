@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       )}
 
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-[100] w-72 bg-slate-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } shadow-2xl lg:shadow-none border-r border-slate-800`}
       >

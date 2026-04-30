@@ -10,9 +10,10 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="flex items-center">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-3 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 focus:outline-none transition-all"
+          className="lg:hidden p-3 -ml-4 rounded-xl text-slate-900 hover:bg-slate-100 active:bg-slate-200 transition-all"
+          aria-label="Open Menu"
         >
-          <MdMenu className="h-7 w-7" />
+          <MdMenu className="h-8 w-8" />
         </button>
       </div>
 
