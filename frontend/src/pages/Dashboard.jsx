@@ -13,6 +13,7 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
+import { MdAssignment } from 'react-icons/md';
 
 ChartJS.register(
   CategoryScale,
