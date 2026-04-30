@@ -9,7 +9,9 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     await seedData(); // Seed data for live db
   } catch (error) {
-    console.error(`Error connecting to MongoDB Atlas: ${error.message}`);
+    console.error('CRITICAL: MongoDB Atlas Connection Failed!');
+    console.error('Error Details:', error.message);
+    console.error('Full Error:', error);
     console.log("Attempting to start local in-memory database as fallback...");
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
