@@ -6,22 +6,25 @@ const Navbar = ({ toggleSidebar }) => {
   const { logout } = useContext(AuthContext);
 
   return (
-    <header className="h-16 bg-white shadow-sm flex items-center justify-between px-6 z-10">
+    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-30">
       <div className="flex items-center">
         <button
           onClick={toggleSidebar}
-          className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+          className="lg:hidden p-3 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 focus:outline-none transition-all"
         >
-          <MdMenu className="h-6 w-6" />
+          <MdMenu className="h-7 w-7" />
         </button>
       </div>
-      <div className="flex items-center space-x-4">
+
+      <div className="flex items-center space-x-6">
+        {/* Search or Quick Action could go here */}
+        
         <button
           onClick={logout}
-          className="flex items-center space-x-2 text-gray-500 hover:text-red-600 transition-colors"
+          className="group flex items-center space-x-2 px-5 py-2.5 rounded-xl text-slate-600 hover:text-white hover:bg-red-500 transition-all duration-300 border border-slate-200 hover:border-red-500 shadow-sm"
         >
-          <span className="hidden sm:block font-medium">Logout</span>
-          <MdLogout className="w-5 h-5" />
+          <span className="hidden sm:block font-bold tracking-wide">Sign Out</span>
+          <MdLogout className="w-5 h-5 transition-transform group-hover:translate-x-1" />
         </button>
       </div>
     </header>

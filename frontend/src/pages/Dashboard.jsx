@@ -59,7 +59,11 @@ const Dashboard = () => {
     };
   }, [socket]);
 
-  if (loading) return <div>Loading dashboard...</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+    </div>
+  );
 
   const barData = {
     labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
@@ -73,11 +77,12 @@ const Dashboard = () => {
           stats?.overdueTasks || 0,
         ],
         backgroundColor: [
-          'rgba(34, 197, 94, 0.6)',
-          'rgba(59, 130, 246, 0.6)',
-          'rgba(234, 179, 8, 0.6)',
-          'rgba(239, 68, 68, 0.6)',
+          '#22c55e',
+          '#3b82f6',
+          '#eab308',
+          '#ef4444',
         ],
+        borderRadius: 8,
       },
     ],
   };
@@ -90,47 +95,80 @@ const Dashboard = () => {
           stats?.completedTasks || 0,
           (stats?.totalTasks || 0) - (stats?.completedTasks || 0),
         ],
-        backgroundColor: ['rgba(34, 197, 94, 0.6)', 'rgba(209, 213, 219, 0.6)'],
+        backgroundColor: ['#6366f1', '#e2e8f0'],
+        borderWidth: 0,
+        cutout: '75%',
       },
     ],
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">
-        Welcome back, {user?.name}!
-      </h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Total Tasks</div>
-          <div className="text-3xl font-bold text-gray-800">{stats?.totalTasks || 0}</div>
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            Welcome back, <span className="text-indigo-600">{user?.name}</span>!
+          </h1>
+          <p className="text-slate-500 mt-1 font-medium">Here's what's happening with your projects today.</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Completed</div>
-          <div className="text-3xl font-bold text-green-600">{stats?.completedTasks || 0}</div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">In Progress</div>
-          <div className="text-3xl font-bold text-blue-600">{stats?.inProgressTasks || 0}</div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Overdue</div>
-          <div className="text-3xl font-bold text-red-600">{stats?.overdueTasks || 0}</div>
+        <div className="flex items-center space-x-2 text-sm font-bold text-slate-400 bg-slate-100 px-4 py-2 rounded-full">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
+          <span>LIVE UPDATES ENABLED</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Task Status Overview</h2>
-          <div className="h-64 flex items-center justify-center">
-            <Bar data={barData} options={{ maintainAspectRatio: false }} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: 'Total Tasks', value: stats?.totalTasks || 0, color: 'indigo', icon: <MdAssignment /> },
+          { label: 'Completed', value: stats?.completedTasks || 0, color: 'green', icon: <MdAssignment /> },
+          { label: 'In Progress', value: stats?.inProgressTasks || 0, color: 'blue', icon: <MdAssignment /> },
+          { label: 'Overdue', value: stats?.overdueTasks || 0, color: 'red', icon: <MdAssignment /> },
+        ].map((item, idx) => (
+          <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+            <div className={`w-12 h-12 rounded-2xl bg-${item.color}-50 text-${item.color}-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform`}>
+              {item.icon}
+            </div>
+            <div className="text-slate-500 text-sm font-bold uppercase tracking-wider">{item.label}</div>
+            <div className={`text-4xl font-black text-slate-900 mt-1`}>{item.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-bold text-slate-900">Task Overview</h2>
+            <select className="bg-slate-50 border-none rounded-xl text-sm font-bold text-slate-600 px-4 py-2 focus:ring-2 focus:ring-indigo-500">
+              <option>Last 7 Days</option>
+              <option>Last 30 Days</option>
+            </select>
+          </div>
+          <div className="h-80 w-full">
+            <Bar 
+              data={barData} 
+              options={{ 
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                  y: { grid: { display: false }, border: { display: false } },
+                  x: { grid: { display: false }, border: { display: false } }
+                }
+              }} 
+            />
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex flex-col items-center">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 w-full text-left">Completion Rate</h2>
-          <div className="h-64 w-64">
-            <Doughnut data={doughnutData} options={{ maintainAspectRatio: false }} />
+
+        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 z-0 opacity-50" />
+          <h2 className="text-xl font-bold text-slate-900 mb-8 w-full text-left relative z-10">Completion</h2>
+          <div className="h-64 w-64 relative z-10">
+            <Doughnut data={doughnutData} options={{ maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-4xl font-black text-slate-900">
+                {stats?.totalTasks ? Math.round((stats.completedTasks / stats.totalTasks) * 100) : 0}%
+              </span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Done</span>
+            </div>
           </div>
         </div>
       </div>
