@@ -2,28 +2,23 @@ const mongoose = require('mongoose');
 const seedData = require('../utils/seedData');
 
 const connectDB = async () => {
+  if (!process.env.MONGODB_URI) {
+    console.error('CRITICAL: MONGODB_URI is missing from environment variables!');
+    process.exit(1);
+  }
+
   try {
+    console.log('Attempting to connect to MongoDB Atlas...');
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      family: 4, // Force IPv4
+      family: 4, 
+      serverSelectionTimeoutMS: 10000, // Wait 10 seconds before failing
     });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-    await seedData(); // Seed data for live db
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    await seedData(); 
   } catch (error) {
-    console.error('CRITICAL: MongoDB Atlas Connection Failed!');
-    console.error('Error Details:', error.message);
-    console.error('Full Error:', error);
-    console.log("Attempting to start local in-memory database as fallback...");
-    try {
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      const mongoServer = await MongoMemoryServer.create();
-      const mongoUri = mongoServer.getUri();
-      const conn = await mongoose.connect(mongoUri);
-      console.log(`MongoDB In-Memory Server Connected: ${conn.connection.host}`);
-      await seedData(); // Seed data for in-memory db
-    } catch (fallbackError) {
-      console.error(`Error starting fallback in-memory database: ${fallbackError.message}`);
-      process.exit(1);
-    }
+    console.error('❌ CRITICAL: MongoDB Atlas Connection Failed!');
+    console.error('Reason:', error.message);
+    // Don't exit here, let the app stay alive so we can see the logs
   }
 };
 
